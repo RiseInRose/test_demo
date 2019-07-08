@@ -37,7 +37,7 @@ class MyThread(threading.Thread):
 # threadLock = threading.Lock()
 
 thread_dict = dict()
-num = 10
+num = 1
 t = time()
 key = 'async'
 # key = 'sync'
