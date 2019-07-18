@@ -34,7 +34,11 @@ class Base:
             time.sleep(3)
 
     def start_thread(self):
+        """
+        下面这个是错误写法，函数后面添加括号，会导致这个函数直接被执行，因为内部有while 1，会导致子线程根本无法创建成功
         p = Thread(target=self.update_data())
+        """
+        p = Thread(target=self.update_data)
         p.start()
         # p.join()
 
@@ -56,9 +60,9 @@ class C(Base):
 
     def start_thread(self):
         print('---------')
-        p1 = Thread(target=self.update_data())
+        p1 = Thread(target=self.update_data)
         print('22222222')
-        p2 = Thread(target=self.show_data())
+        p2 = Thread(target=self.show_data)
         print('--start--')
         p1.start()
         print('p1 start')

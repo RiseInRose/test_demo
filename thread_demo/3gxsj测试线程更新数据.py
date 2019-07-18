@@ -52,6 +52,11 @@ class C(Base):
         p2 = Thread(target=self.show_data())
         p1.start()
         p2.start()
+        # 需要设置让子线程随着主线程退出而退出，否者容易造成僵尸进程。
+        p1.setDaemon(True)
+        p2.setDaemon(True)
+        p1.join()
+        p2.join()
 
 
 if __name__ == '__main__':
@@ -71,3 +76,6 @@ if __name__ == '__main__':
     '''
     c = C()
     c.start_thread()
+    '''
+    还发现一个问题，子线程无法使用ctrl + c 退出？这个需要处理一下。
+    '''
