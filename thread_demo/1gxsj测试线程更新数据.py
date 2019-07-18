@@ -11,11 +11,19 @@
 """
 from threading import Thread
 import time
+import redis
+import signal
+import sys
+
+
+def signal_handler():
+    sys.exit(0)
 
 
 class Base:
     def __init__(self):
         self.data = ''
+        self.conn = redis.Redis(host="127.0.0.1", port=6379)
 
     def update_data(self):
         while 1:
@@ -25,8 +33,23 @@ class Base:
             print('子线程值：{}'.format(b))
             time.sleep(3)
 
+    @staticmethod
+    def set_data_by_files():
+        while 1:
+            with open('./data.txt', 'w') as f:
+                i = input('请输入：')
+                f.write(i)
+
     def update_data_from_redis(self):
-        pass
+        while 1:
+            self.data = self.conn.get("x1")
+            print('子线程值：{}'.format(self.data))
+            time.sleep(3)
+
+    def set_data_from_redis(self):
+        while 1:
+            i = input('请输入：')
+            self.conn.set("x1", i+'\n', ex=5)  # ex代表seconds，px代表ms
 
     def show_data(self):
         while 1:
@@ -40,7 +63,7 @@ class Base:
         """
         p = Thread(target=self.update_data)
         p.start()
-        # p.join()
+        p.join()
 
 
 class A(Base):
@@ -59,15 +82,26 @@ class C(Base):
         super().__init__()
 
     def start_thread(self):
-        print('---------')
         p1 = Thread(target=self.update_data)
-        print('22222222')
         p2 = Thread(target=self.show_data)
         print('--start--')
         p1.start()
-        print('p1 start')
         p2.start()
-        print('p2 start')
+
+
+class D(Base):
+    def __init__(self):
+        super().__init__()
+        self.start_thread()
+
+    def start_thread(self):
+        p1 = Thread(target=self.update_data_from_redis)
+        p2 = Thread(target=self.show_data)
+        p3 = Thread(target=self.set_data_from_redis)
+        print('--start--')
+        p1.start()
+        p2.start()
+        p3.start()
 
 
 if __name__ == '__main__':
@@ -84,5 +118,16 @@ if __name__ == '__main__':
     # b.show_data()
     '''
     两个都使用子线程，这样使用线程是对的吗？为什么前面的线程会把后面的卡住？
+    因为线程在输入函数，后面添加了括号，导致，创建线程时函数被执行。而函数本身是个循环，导致。。。。。
     '''
-    c = C()
+    # try:
+    #     c = C()
+    # except KeyboardInterrupt:
+    #     pass
+    # signal.signal(signal.SIGINT, signal_handler)
+    '''
+    '''
+    try:
+        d = D()
+    except KeyboardInterrupt:
+        pass

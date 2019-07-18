@@ -1,0 +1,21 @@
+version: "3.4"
+services:
+  redis:
+    image: dockerhub.datagrand.com/global/redis:3.2.8
+    deploy:
+      replicas: 1
+    networks:
+      - tests
+    volumes:
+      - ./data/redis:/data
+    command: redis-server
+
+networks:
+  rec_priv:
+    ipam:
+      config:
+      - subnet: 172.16.238.0/24
+
+secrets:
+  global.conf:
+    file: ../conf/global.conf
