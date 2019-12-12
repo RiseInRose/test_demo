@@ -1,0 +1,38 @@
+version: "3.3"
+
+services:
+  elasticsearch:
+    image: elasticsearch:7.2.0
+    networks:
+      - es_network
+    volumes:
+      - /data/elasticsearch/data:/usr/share/elasticsearch/data
+      - /data/elasticsearch/logs:/usr/share/elasticsearch/logs
+    ports:
+      - 10025:9200
+    environment:
+      - "discovery.type=single-node"
+
+#  kibana:
+#    image: kibana:7.2.0
+#    networks:
+#      - es_network
+#    ports:
+#      - 10023:5601
+#    depends_on:
+#      - elasticsearch
+#    environment:
+#      ELASTICSEARCH_URL: http://elasticsearch:9200
+
+#  elastichd:
+#    image: containerize/elastichd
+#    networks:
+#      - es_network
+#    ports:
+#      - 10024:9800
+#    depends_on:
+#      - elasticsearch
+#    # 在主界面，输入http://elasticsearch:9200 连接。
+
+networks:
+  es_network:

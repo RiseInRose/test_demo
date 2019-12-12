@@ -4,6 +4,9 @@
 # wechat chending2012
 """
 这个是python2.7环境下，多进程队列模式的demo
+
+经过生产环境的验证，python queue 容器出现死锁，导致很多问题。这个可以使用redis替代。
+
 """
 import time
 from multiprocessing import Process, Queue
